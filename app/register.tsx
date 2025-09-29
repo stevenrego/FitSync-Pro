@@ -54,7 +54,8 @@ export default function RegisterScreen() {
       showWebAlert('Error', 'Please enter your email');
       return false;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    // More flexible email validation - accepts any email with @ and .
+    if (!email.includes('@') || !email.includes('.') || email.length < 5) {
       showWebAlert('Error', 'Please enter a valid email address');
       return false;
     }
