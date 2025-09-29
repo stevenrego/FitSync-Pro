@@ -2,38 +2,22 @@ import { supabase } from './supabase';
 import { User, WorkoutPlan } from '../types';
 
 export const aiPersonalService = {
-  // Generate AI-powered workout plan based on user profile
+  // Generate AI-powered workout plan via secure Edge Function
   async generatePersonalizedPlan(user: User): Promise<WorkoutPlan | null> {
     try {
-      // Calculate user fitness metrics
-      const fitnessScore = this.calculateFitnessScore(user);
-      const planStructure = this.generatePlanStructure(user, fitnessScore);
+      const { data, error } = await supabase.functions.invoke('ai-plan-generator', {
+        body: {
+          userId: user.id,
+          planType: 'workout'
+        }
+      });
 
-      // Create the workout plan
-      const { data: plan, error } = await supabase
-        .from('workout_plans')
-        .insert({
-          name: `AI Custom Plan for ${user.name}`,
-          description: `Personalized ${user.fitness_level} plan targeting ${user.goals?.join(', ') || 'general fitness'}`,
-          difficulty: user.fitness_level || 'beginner',
-          duration_weeks: planStructure.duration,
-          created_by: 'ai-system',
-          is_ai_generated: true,
-          is_public: false,
-          price: 0,
-          tags: [...(user.goals || []), user.fitness_level || 'beginner', 'ai-generated'],
-          rating: 0,
-          rating_count: 0
-        })
-        .select()
-        .single();
+      if (error) {
+        console.error('AI plan generation error:', error);
+        return null;
+      }
 
-      if (error) throw error;
-
-      // Generate exercises for the plan
-      await this.generatePlanExercises(plan.id, user, planStructure);
-
-      return plan as WorkoutPlan;
+      return data?.plan || null;
     } catch (error) {
       console.error('Error generating personalized plan:', error);
       return null;
@@ -98,39 +82,6 @@ export const aiPersonalService = {
     };
   },
 
-  // Generate exercises for the plan
-  async generatePlanExercises(planId: string, user: User, structure: any) {
-    try {
-      // Get appropriate exercises from database
-      const { data: exercises, error } = await supabase
-        .from('exercises')
-        .select('*')
-        .limit(structure.exercisesPerWorkout);
-
-      if (error) throw error;
-      if (!exercises || exercises.length === 0) return;
-
-      // Create plan exercises with AI-calculated sets/reps
-      const planExercises = exercises.map((exercise, index) => ({
-        workout_plan_id: planId,
-        exercise_id: exercise.id,
-        sets: this.calculateSets(user.fitness_level),
-        reps: this.calculateReps(exercise.muscle_groups, user.fitness_level),
-        rest_seconds: this.calculateRest(user.fitness_level),
-        order_index: index + 1,
-        notes: this.generateExerciseNotes(exercise, user)
-      }));
-
-      const { error: insertError } = await supabase
-        .from('workout_plan_exercises')
-        .insert(planExercises);
-
-      if (insertError) throw insertError;
-    } catch (error) {
-      console.error('Error generating plan exercises:', error);
-    }
-  },
-
   // Calculate optimal sets based on fitness level
   calculateSets(fitnessLevel?: string): number {
     switch (fitnessLevel) {
@@ -179,91 +130,6 @@ export const aiPersonalService = {
     }
     
     return notes.join('. ') + '.';
-  },
-
-  // Dynamic plan adjustment based on progress
-  async adjustPlanDifficulty(userId: string, planId: string, progressData: any) {
-    try {
-      // Analyze user progress
-      const adjustment = this.analyzeProgressForAdjustment(progressData);
-      
-      if (!adjustment.shouldAdjust) return null;
-
-      // Get current plan exercises
-      const { data: exercises, error } = await supabase
-        .from('workout_plan_exercises')
-        .select('*')
-        .eq('workout_plan_id', planId);
-
-      if (error) throw error;
-
-      // Apply adjustments
-      const updates = exercises?.map(exercise => ({
-        ...exercise,
-        sets: Math.max(1, exercise.sets + adjustment.setsChange),
-        reps: Math.max(1, (exercise.reps || 10) + adjustment.repsChange),
-        rest_seconds: Math.max(30, exercise.rest_seconds + adjustment.restChange)
-      }));
-
-      // Update exercises
-      if (updates) {
-        for (const update of updates) {
-          await supabase
-            .from('workout_plan_exercises')
-            .update({
-              sets: update.sets,
-              reps: update.reps,
-              rest_seconds: update.rest_seconds
-            })
-            .eq('id', update.id);
-        }
-      }
-
-      return {
-        adjusted: true,
-        type: adjustment.type,
-        message: adjustment.message
-      };
-    } catch (error) {
-      console.error('Error adjusting plan:', error);
-      return null;
-    }
-  },
-
-  // Analyze progress data to determine adjustments
-  analyzeProgressForAdjustment(progressData: any) {
-    const consistency = progressData.workoutsCompleted / progressData.workoutsPlanned;
-    const averageDifficulty = progressData.averageDifficultyRating || 3;
-    
-    // Too easy - increase difficulty
-    if (consistency >= 0.9 && averageDifficulty < 3) {
-      return {
-        shouldAdjust: true,
-        type: 'increase',
-        setsChange: 1,
-        repsChange: 2,
-        restChange: -15,
-        message: 'Great progress! Increasing intensity to challenge you more.'
-      };
-    }
-    
-    // Too hard - decrease difficulty  
-    if (consistency <= 0.6 || averageDifficulty > 4) {
-      return {
-        shouldAdjust: true,
-        type: 'decrease',
-        setsChange: -1,
-        repsChange: -2,
-        restChange: 15,
-        message: 'Adjusting plan for better sustainability and consistency.'
-      };
-    }
-    
-    return {
-      shouldAdjust: false,
-      type: 'maintain',
-      message: 'Current plan difficulty is optimal for your progress.'
-    };
   },
 
   // Calculate nutrition goals using AI algorithms
