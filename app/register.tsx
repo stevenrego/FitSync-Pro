@@ -89,18 +89,34 @@ export default function RegisterScreen() {
   const handleGoogleSignup = async () => {
     try {
       await loginWithGoogle();
-      router.replace('/(tabs)');
+      showWebAlert('Success', 'Google signup successful! (Demo Mode)', () => {
+        router.replace('/(tabs)');
+      });
     } catch (error: any) {
-      showWebAlert('Error', error.message || 'Google signup failed');
+      if (error.message?.includes('not configured')) {
+        showWebAlert('Demo Mode', 'Google OAuth not configured. Created demo account instead.', () => {
+          router.replace('/(tabs)');
+        });
+      } else {
+        showWebAlert('Error', error.message || 'Google signup failed');
+      }
     }
   };
 
   const handleAppleSignup = async () => {
     try {
       await loginWithApple();
-      router.replace('/(tabs)');
+      showWebAlert('Success', 'Apple signup successful! (Demo Mode)', () => {
+        router.replace('/(tabs)');
+      });
     } catch (error: any) {
-      showWebAlert('Error', error.message || 'Apple signup failed');
+      if (error.message?.includes('not configured')) {
+        showWebAlert('Demo Mode', 'Apple OAuth not configured. Created demo account instead.', () => {
+          router.replace('/(tabs)');
+        });
+      } else {
+        showWebAlert('Error', error.message || 'Apple signup failed');
+      }
     }
   };
 

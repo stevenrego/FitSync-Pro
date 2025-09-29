@@ -58,18 +58,34 @@ export default function LoginScreen() {
   const handleGoogleLogin = async () => {
     try {
       await loginWithGoogle();
-      router.replace('/(tabs)');
+      showWebAlert('Success', 'Google login successful! (Demo Mode)', () => {
+        router.replace('/(tabs)');
+      });
     } catch (error: any) {
-      showWebAlert('Error', error.message || 'Google login failed');
+      if (error.message?.includes('not configured')) {
+        showWebAlert('Demo Mode', 'Google OAuth not configured. Created demo account instead.', () => {
+          router.replace('/(tabs)');
+        });
+      } else {
+        showWebAlert('Error', error.message || 'Google login failed');
+      }
     }
   };
 
   const handleAppleLogin = async () => {
     try {
       await loginWithApple();
-      router.replace('/(tabs)');
+      showWebAlert('Success', 'Apple login successful! (Demo Mode)', () => {
+        router.replace('/(tabs)');
+      });
     } catch (error: any) {
-      showWebAlert('Error', error.message || 'Apple login failed');
+      if (error.message?.includes('not configured')) {
+        showWebAlert('Demo Mode', 'Apple OAuth not configured. Created demo account instead.', () => {
+          router.replace('/(tabs)');
+        });
+      } else {
+        showWebAlert('Error', error.message || 'Apple login failed');
+      }
     }
   };
 
