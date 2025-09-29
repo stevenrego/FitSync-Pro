@@ -1,4 +1,5 @@
 import React, { createContext, ReactNode, useState, useEffect } from 'react';
+import { router } from 'expo-router';
 import { User } from '../types';
 import { authService } from '../services/auth';
 import { supabase } from '../services/supabase';
@@ -58,9 +59,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .single();
 
       if (error) throw error;
-      setUser(data as User);
+      
+      const userProfile = data as User;
+      setUser(userProfile);
+      
+      // Role-based navigation redirect
+      redirectBasedOnRole(userProfile.role);
     } catch (error) {
       console.error('Error loading user profile:', error);
+    }
+  };
+
+  const redirectBasedOnRole = (role: string) => {
+    switch (role) {
+      case 'admin':
+        router.replace('/admin-dashboard');
+        break;
+      case 'coach':
+        router.replace('/coach-dashboard');
+        break;
+      case 'dietician':
+        router.replace('/nutritionist-dashboard');
+        break;
+      case 'user':
+      default:
+        router.replace('/(tabs)');
+        break;
     }
   };
 
@@ -118,6 +142,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await authService.signOut();
       setUser(null);
+      router.replace('/');
     } catch (error) {
       console.error('Error signing out:', error);
     }
