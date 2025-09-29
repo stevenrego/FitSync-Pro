@@ -1,4 +1,4 @@
-import React, { useState, Platform } from 'react';
+import React, { useState } from 'react';
 import { 
   View, 
   Text, 
@@ -8,7 +8,8 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Alert,
-  Modal
+  Modal,
+  Platform
 } from 'react-native';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
