@@ -1,4 +1,16 @@
 {
-  "installCommand": "npm install",
-  "buildCommand": "npx expo export --platform web --output-dir dist"
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "buildCommand": "npx expo export:web",
+  "installCommand": "npm install --legacy-peer-deps",
+  "framework": "other",
+  "outputDirectory": "dist"
 }
