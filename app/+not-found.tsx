@@ -1,74 +1,66 @@
-/*
- * @Description: 
- */
-
-// Powered by OnSpace.AI
-import { MaterialIcons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { Link } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Colors, Sizes, Fonts } from '../constants/theme';
 
 export default function NotFoundScreen() {
+  const insets = useSafeAreaInsets();
+
   return (
-    <SafeAreaView style={styles.container}>
-      <LinearGradient
-        colors={['#0a0a0a', '#1a1a1a']}
-        style={StyleSheet.absoluteFillObject}
-      />
-      
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.content}>
-        <MaterialIcons name="photo-camera" size={80} color="#FFD700" />
-        <Text style={styles.title}>Page Not Found</Text>
-        <Text style={styles.message}>
-          The moment you're looking for seems to have been lost in the shadows.
+        <Text style={styles.title}>404</Text>
+        <Text style={styles.subtitle}>Page Not Found</Text>
+        <Text style={styles.description}>
+          The page you are looking for does not exist.
         </Text>
-        
-        <TouchableOpacity 
-          style={styles.homeButton}
-          onPress={() => router.push('/')}
-        >
-          <Text style={styles.homeButtonText}>Return Home</Text>
-        </TouchableOpacity>
+        <Link href="/" style={styles.link}>
+          <Text style={styles.linkText}>Go back to home</Text>
+        </Link>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a0a0a',
+    backgroundColor: Colors.background,
   },
   content: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    paddingHorizontal: Sizes.lg,
   },
   title: {
-    fontSize: 28,
+    fontSize: 72,
     fontWeight: 'bold',
-    color: '#FFFFFF',
-    marginTop: 20,
-    marginBottom: 10,
+    color: Colors.primary,
+    marginBottom: Sizes.md,
   },
-  message: {
-    fontSize: 16,
-    color: '#CCCCCC',
+  subtitle: {
+    fontSize: Fonts.sizes.xl,
+    fontWeight: 'bold',
+    color: Colors.text,
+    marginBottom: Sizes.sm,
+  },
+  description: {
+    fontSize: Fonts.sizes.md,
+    color: Colors.textSecondary,
     textAlign: 'center',
-    marginBottom: 40,
-    lineHeight: 22,
+    marginBottom: Sizes.xl,
   },
-  homeButton: {
-    backgroundColor: '#FFD700',
-    paddingHorizontal: 30,
-    paddingVertical: 15,
-    borderRadius: 25,
+  link: {
+    backgroundColor: Colors.primary,
+    paddingVertical: Sizes.md,
+    paddingHorizontal: Sizes.lg,
+    borderRadius: Sizes.borderRadius,
   },
-  homeButtonText: {
-    color: '#0a0a0a',
-    fontWeight: 'bold',
-    fontSize: 16,
+  linkText: {
+    color: 'white',
+    fontSize: Fonts.sizes.md,
+    fontWeight: '600',
   },
 });

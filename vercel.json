@@ -1,13 +1,15 @@
 {
   "version": 2,
   "builds": [
-    { "src": "package.json", "use": "@vercel/static-build" }
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
   ],
-  "framework": "create-react-app",
-  "env": {
-    "EXPO_USE_WEBPACK": "true"
-  },
+  "buildCommand": "npx expo export --platform web --output-dir dist",
   "installCommand": "npm install --legacy-peer-deps",
-  "buildCommand": "npm run build:web",
   "outputDirectory": "dist"
 }
