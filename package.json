@@ -23,14 +23,12 @@
     "graphql": "^15.3.0",
     "expo": "~53.0.9",
     "expo-router": "~5.0.7",
-    "react-native-dynamic": "^1.0.0",
-    "lucide-react-native": "^0.475.0",
     "react-redux": "^7.2.9",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "ajv": "^6.12.6",
-    "ajv-keywords": "^3.5.2",
-    "...": "keep all other expo/react-native deps same as before"
+    "ajv-keywords": "^3.5.2"
+    // keep all your other Expo/React Native deps here unchanged
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
@@ -39,5 +37,10 @@
     "eslint-config-expo": "~9.2.0",
     "react-dev-inspector": "^2.0.1",
     "typescript": "~5.8.3"
+  },
+  "overrides": {
+    "react-native": {
+      "react": "18.3.1"
+    }
   }
 }
