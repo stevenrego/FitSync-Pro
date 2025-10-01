@@ -191,3 +191,256 @@ export default function LoginScreen() {
               title="Sign In"
               onPress={handleLogin}
               disabled={isLoading}
+              gradient={['rgba(255,255,255,0.9)', 'rgba(255,255,255,0.8)']}
+              style={styles.loginButton}
+            />
+
+            {/* Divider */}
+            <View style={styles.divider}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>or continue with</Text>
+              <View style={styles.dividerLine} />
+            </View>
+
+            {/* Social Login */}
+            <View style={styles.socialButtons}>
+              <TouchableOpacity 
+                style={styles.socialButton}
+                onPress={handleGoogleLogin}
+                disabled={isLoading}
+              >
+                <MaterialIcons name="g-translate" size={24} color={Colors.text} />
+                <Text style={styles.socialButtonText}>Google</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={styles.socialButton}
+                onPress={handleAppleLogin}
+                disabled={isLoading}
+              >
+                <MaterialIcons name="apple" size={24} color={Colors.text} />
+                <Text style={styles.socialButtonText}>Apple</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Register Link */}
+            <View style={styles.registerContainer}>
+              <Text style={styles.registerText}>Don't have an account? </Text>
+              <TouchableOpacity onPress={() => router.push('/register')}>
+                <Text style={styles.registerLink}>Sign Up</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Test Accounts Helper */}
+            <View style={styles.testAccounts}>
+              <Text style={styles.testTitle}>🧪 Test Accounts:</Text>
+              <Text style={styles.testAccount}>👑 Admin: admin.test@gmail.com / admin123456</Text>
+              <Text style={styles.testAccount}>🏋️ Coach: coach.test@gmail.com / coach123456</Text>
+              <Text style={styles.testAccount}>🥗 Nutritionist: nutritionist.test@gmail.com / nutritionist123456</Text>
+              <Text style={styles.testAccount}>👤 User: test@example.com / 123456</Text>
+            </View>
+          </View>
+        </ScrollView>
+
+        {/* Web Alert Modal */}
+        {Platform.OS === 'web' && (
+          <Modal visible={alertConfig.visible} transparent animationType="fade">
+            <View style={styles.alertOverlay}>
+              <View style={styles.alertContainer}>
+                <Text style={styles.alertTitle}>{alertConfig.title}</Text>
+                <Text style={styles.alertMessage}>{alertConfig.message}</Text>
+                <TouchableOpacity 
+                  style={styles.alertButton}
+                  onPress={() => {
+                    alertConfig.onOk?.();
+                    setAlertConfig(prev => ({ ...prev, visible: false }));
+                  }}
+                >
+                  <Text style={styles.alertButtonText}>OK</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+        )}
+      </LinearGradient>
+    </KeyboardAvoidingView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  background: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: Sizes.lg,
+  },
+  header: {
+    alignItems: 'center',
+    marginVertical: Sizes.xl,
+  },
+  backButton: {
+    position: 'absolute',
+    left: -Sizes.lg,
+    top: 0,
+    padding: Sizes.sm,
+  },
+  title: {
+    fontSize: Fonts.sizes.title,
+    fontWeight: 'bold',
+    color: 'white',
+    marginBottom: Sizes.sm,
+  },
+  subtitle: {
+    fontSize: Fonts.sizes.md,
+    color: 'rgba(255,255,255,0.8)',
+    textAlign: 'center',
+  },
+  form: {
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    borderRadius: Sizes.lg,
+    padding: Sizes.lg,
+    marginBottom: Sizes.xxl,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.background,
+    borderRadius: Sizes.borderRadius,
+    marginBottom: Sizes.md,
+    paddingHorizontal: Sizes.md,
+  },
+  inputIcon: {
+    marginRight: Sizes.sm,
+  },
+  input: {
+    flex: 1,
+    paddingVertical: Sizes.md,
+    fontSize: Fonts.sizes.md,
+    color: Colors.text,
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: Sizes.md,
+    padding: Sizes.xs,
+  },
+  forgotPassword: {
+    alignSelf: 'flex-end',
+    marginBottom: Sizes.lg,
+  },
+  forgotPasswordText: {
+    color: Colors.primary,
+    fontSize: Fonts.sizes.sm,
+    fontWeight: '500',
+  },
+  loginButton: {
+    marginBottom: Sizes.lg,
+  },
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: Sizes.lg,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: Colors.textSecondary + '30',
+  },
+  dividerText: {
+    marginHorizontal: Sizes.md,
+    color: Colors.textSecondary,
+    fontSize: Fonts.sizes.sm,
+  },
+  socialButtons: {
+    flexDirection: 'row',
+    gap: Sizes.md,
+    marginBottom: Sizes.lg,
+  },
+  socialButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: Sizes.md,
+    backgroundColor: Colors.background,
+    borderRadius: Sizes.borderRadius,
+    borderWidth: 1,
+    borderColor: Colors.textSecondary + '30',
+  },
+  socialButtonText: {
+    marginLeft: Sizes.sm,
+    fontSize: Fonts.sizes.md,
+    color: Colors.text,
+    fontWeight: '500',
+  },
+  registerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Sizes.lg,
+  },
+  registerText: {
+    color: Colors.textSecondary,
+    fontSize: Fonts.sizes.md,
+  },
+  registerLink: {
+    color: Colors.primary,
+    fontSize: Fonts.sizes.md,
+    fontWeight: '600',
+  },
+  testAccounts: {
+    backgroundColor: Colors.background,
+    borderRadius: Sizes.borderRadius,
+    padding: Sizes.md,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.primary,
+  },
+  testTitle: {
+    fontSize: Fonts.sizes.sm,
+    fontWeight: 'bold',
+    color: Colors.text,
+    marginBottom: Sizes.xs,
+  },
+  testAccount: {
+    fontSize: Fonts.sizes.xs,
+    color: Colors.textSecondary,
+    marginBottom: 2,
+  },
+  alertOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  alertContainer: {
+    backgroundColor: 'white',
+    padding: Sizes.lg,
+    borderRadius: Sizes.borderRadius,
+    minWidth: 280,
+  },
+  alertTitle: {
+    fontSize: Fonts.sizes.lg,
+    fontWeight: 'bold',
+    marginBottom: Sizes.sm,
+    color: Colors.text,
+  },
+  alertMessage: {
+    fontSize: Fonts.sizes.md,
+    marginBottom: Sizes.lg,
+    color: Colors.textSecondary,
+  },
+  alertButton: {
+    backgroundColor: Colors.primary,
+    padding: Sizes.sm,
+    borderRadius: Sizes.sm,
+    alignItems: 'center',
+  },
+  alertButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: Fonts.sizes.md,
+  },
+});
