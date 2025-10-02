@@ -1,67 +1,45 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Colors, Sizes, Fonts } from '../constants/theme';
-import { router } from 'expo-router';
+import { Link, Stack } from 'expo-router';
+import { View, Text, StyleSheet } from 'react-native';
 
 export default function NotFoundScreen() {
-  const handleGoHome = () => {
-    router.replace('/');
-  };
-
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
+    <>
+      <Stack.Screen options={{ title: "Oops! Not Found" }} />
+      <View style={styles.container}>
         <Text style={styles.title}>404</Text>
-        <Text style={styles.subtitle}>Page Not Found</Text>
-        <Text style={styles.description}>
-          The page you are looking for does not exist.
-        </Text>
-        <TouchableOpacity style={styles.button} onPress={handleGoHome}>
-          <Text style={styles.buttonText}>Go Home</Text>
-        </TouchableOpacity>
+        <Text style={styles.subtitle}>This screen doesn't exist.</Text>
+        <Link href="/" style={styles.link}>
+          <Text style={styles.linkText}>Go to home screen</Text>
+        </Link>
       </View>
-    </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: Sizes.lg,
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: '#fff',
   },
   title: {
-    fontSize: 72,
+    fontSize: 64,
     fontWeight: 'bold',
-    color: Colors.primary,
-    marginBottom: Sizes.md,
+    marginBottom: 8,
   },
   subtitle: {
-    fontSize: Fonts.sizes.xl,
-    fontWeight: 'bold',
-    color: Colors.text,
-    marginBottom: Sizes.sm,
+    fontSize: 20,
+    marginBottom: 24,
+    color: '#666',
   },
-  description: {
-    fontSize: Fonts.sizes.md,
-    color: Colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: Sizes.xl,
+  link: {
+    marginTop: 15,
+    paddingVertical: 15,
   },
-  button: {
-    backgroundColor: Colors.primary,
-    paddingVertical: Sizes.md,
-    paddingHorizontal: Sizes.lg,
-    borderRadius: Sizes.borderRadius,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: Fonts.sizes.md,
-    fontWeight: '600',
+  linkText: {
+    fontSize: 16,
+    color: '#2e78b7',
   },
 });
