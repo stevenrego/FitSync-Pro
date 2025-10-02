@@ -1,23 +1,25 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Link } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Colors, Sizes, Fonts } from '../constants/theme';
 
 export default function NotFoundScreen() {
-  const insets = useSafeAreaInsets();
+  const handleGoHome = () => {
+    if (typeof window !== 'undefined') {
+      window.location.href = '/';
+    }
+  };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.title}>404</Text>
         <Text style={styles.subtitle}>Page Not Found</Text>
         <Text style={styles.description}>
           The page you are looking for does not exist.
         </Text>
-        <Link href="/" style={styles.link}>
-          <Text style={styles.linkText}>Go back to home</Text>
-        </Link>
+        <TouchableOpacity style={styles.button} onPress={handleGoHome}>
+          <Text style={styles.buttonText}>Go Home</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -52,13 +54,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: Sizes.xl,
   },
-  link: {
+  button: {
     backgroundColor: Colors.primary,
     paddingVertical: Sizes.md,
     paddingHorizontal: Sizes.lg,
     borderRadius: Sizes.borderRadius,
   },
-  linkText: {
+  buttonText: {
     color: 'white',
     fontSize: Fonts.sizes.md,
     fontWeight: '600',
