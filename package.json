@@ -88,6 +88,7 @@
     "react-native-calendars": "^1.1312.1",
     "react-native-chart-kit": "6.12.0",
     "react-native-crypto-js": "^1.0.0",
+    "react-native-dynamic": "^1.0.0",
     "react-native-elements": "^3.4.3",
     "react-native-fade-in-image": "^1.6.1",
     "react-native-gesture-handler": "~2.24.0",
@@ -142,13 +143,11 @@
     "typescript": "~5.8.3"
   },
   "overrides": {
-    "@shopify/react-native-skia": "file:src/shims/react-native-skia.js",
-    "react-native-dynamic": "file:src/shims/react-native-dynamic.js"
+    "react-native-dynamic": {
+      "react": "18.3.1"
+    }
   },
   "peerDependenciesMeta": {
-    "@shopify/react-native-skia": {
-      "optional": true
-    },
     "react-native-dynamic": {
       "optional": true
     }
