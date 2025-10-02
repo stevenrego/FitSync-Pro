@@ -1,5 +1,4 @@
 import React, { createContext, ReactNode, useState, useEffect } from 'react';
-import { router } from 'expo-router';
 import { User } from '../types';
 import { authService } from '../services/auth';
 import { supabase } from '../services/supabase';
@@ -22,7 +21,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
     getCurrentUser();
 
     // Listen for auth changes
@@ -62,29 +60,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       const userProfile = data as User;
       setUser(userProfile);
-      
-      // Role-based navigation redirect
-      redirectBasedOnRole(userProfile.role);
     } catch (error) {
       console.error('Error loading user profile:', error);
-    }
-  };
-
-  const redirectBasedOnRole = (role: string) => {
-    switch (role) {
-      case 'admin':
-        router.replace('/admin-dashboard');
-        break;
-      case 'coach':
-        router.replace('/coach-dashboard');
-        break;
-      case 'dietician':
-        router.replace('/nutritionist-dashboard');
-        break;
-      case 'user':
-      default:
-        router.replace('/(tabs)');
-        break;
     }
   };
 
@@ -106,7 +83,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
     try {
       await authService.signInWithOAuth('google');
-      // Profile will be loaded via auth state change listener
     } catch (error) {
       setIsLoading(false);
       throw error;
@@ -117,7 +93,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
     try {
       await authService.signInWithOAuth('apple');
-      // Profile will be loaded via auth state change listener
     } catch (error) {
       setIsLoading(false);
       throw error;
@@ -142,7 +117,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await authService.signOut();
       setUser(null);
-      router.replace('/');
     } catch (error) {
       console.error('Error signing out:', error);
     }

@@ -20,50 +20,6 @@ import GradientButton from '../components/ui/GradientButton';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { Colors, Sizes, Fonts } from '../constants/theme';
 
-// ✅ Local supabase client (safe for role fetch)
-// If you already have a central client, replace with that import (e.g. ../services/supabase)
-import { createClient } from '@supabase/supabase-js';
-
-const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL as string;
-const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY as string;
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// --- Role-based redirect helper ---
-async function redirectByRoleAfterAuth() {
-  // Grab the current user from Supabase
-  const { data: authData, error: authErr } = await supabase.auth.getUser();
-  if (authErr || !authData?.user?.id) {
-    // Fallback: if we can't read the session for any reason, send to tabs
-    router.replace('/(tabs)');
-    return;
-  }
-
-  // Fetch role from profiles
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', authData.user.id)
-    .single();
-
-  if (error) {
-    console.warn('Role fetch failed:', error.message);
-    router.replace('/(tabs)');
-    return;
-  }
-
-  const role = (data?.role || 'user') as 'admin' | 'coach' | 'nutritionist' | 'user';
-
-  if (role === 'admin') {
-    router.replace('/admin-dashboard');
-  } else if (role === 'coach') {
-    router.replace('/coach-dashboard');
-  } else if (role === 'nutritionist') {
-    router.replace('/nutritionist-dashboard');
-  } else {
-    router.replace('/(tabs)'); // default end-user home
-  }
-}
-
 export default function LoginScreen() {
   const insets = useSafeAreaInsets();
   const { login, loginWithGoogle, loginWithApple, isLoading } = useAuth();
@@ -91,8 +47,9 @@ export default function LoginScreen() {
       return;
     }
     try {
-      await login(email, password); // your hook performs the auth
-      await redirectByRoleAfterAuth(); // 🔁 role-aware redirect
+      await login(email, password);
+      // Simple redirect - let AuthContext handle role-based routing
+      router.replace('/(tabs)');
     } catch (error: any) {
       showWebAlert('Login Failed', error?.message || 'Invalid email or password');
     }
@@ -100,12 +57,12 @@ export default function LoginScreen() {
 
   const handleGoogleLogin = async () => {
     try {
-      await loginWithGoogle(); // your hook handles the OAuth / demo fallback
-      await redirectByRoleAfterAuth(); // 🔁 role-aware redirect
+      await loginWithGoogle();
+      router.replace('/(tabs)');
     } catch (error: any) {
       if (error?.message?.includes('not configured')) {
-        showWebAlert('Demo Mode', 'Google OAuth not configured. Created demo account instead.', async () => {
-          await redirectByRoleAfterAuth();
+        showWebAlert('Demo Mode', 'Google OAuth not configured. Created demo account instead.', () => {
+          router.replace('/(tabs)');
         });
       } else {
         showWebAlert('Error', error?.message || 'Google login failed');
@@ -116,11 +73,11 @@ export default function LoginScreen() {
   const handleAppleLogin = async () => {
     try {
       await loginWithApple();
-      await redirectByRoleAfterAuth(); // 🔁 role-aware redirect
+      router.replace('/(tabs)');
     } catch (error: any) {
       if (error?.message?.includes('not configured')) {
-        showWebAlert('Demo Mode', 'Apple OAuth not configured. Created demo account instead.', async () => {
-          await redirectByRoleAfterAuth();
+        showWebAlert('Demo Mode', 'Apple OAuth not configured. Created demo account instead.', () => {
+          router.replace('/(tabs)');
         });
       } else {
         showWebAlert('Error', error?.message || 'Apple login failed');
@@ -238,6 +195,10 @@ export default function LoginScreen() {
               <Text style={styles.testAccount}>🏋️ Coach: coach.test@gmail.com / coach123456</Text>
               <Text style={styles.testAccount}>🥗 Nutritionist: nutritionist.test@gmail.com / nutritionist123456</Text>
               <Text style={styles.testAccount}>👤 User: test@example.com / 123456</Text>
+              <Text style={styles.testInstructions}>📍 After login, manually navigate to dashboards:</Text>
+              <Text style={styles.testLink}>• /admin-dashboard</Text>
+              <Text style={styles.testLink}>• /coach-dashboard</Text>
+              <Text style={styles.testLink}>• /nutritionist-dashboard</Text>
             </View>
           </View>
         </ScrollView>
@@ -408,6 +369,19 @@ const styles = StyleSheet.create({
     fontSize: Fonts.sizes.xs,
     color: Colors.textSecondary,
     marginBottom: 2,
+  },
+  testInstructions: {
+    fontSize: Fonts.sizes.xs,
+    fontWeight: 'bold',
+    color: Colors.primary,
+    marginTop: Sizes.sm,
+    marginBottom: Sizes.xs,
+  },
+  testLink: {
+    fontSize: Fonts.sizes.xs,
+    color: Colors.accent,
+    marginLeft: Sizes.sm,
+    marginBottom: 1,
   },
   alertOverlay: {
     flex: 1,
