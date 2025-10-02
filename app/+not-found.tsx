@@ -1,12 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Colors, Sizes, Fonts } from '../constants/theme';
+import { router } from 'expo-router';
 
 export default function NotFoundScreen() {
   const handleGoHome = () => {
-    if (typeof window !== 'undefined') {
-      window.location.href = '/';
-    }
+    router.replace('/');
   };
 
   return (
