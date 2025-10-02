@@ -10,8 +10,8 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "reset-project": "node ./scripts/reset-project.js",
-    "build:web": "expo export:web",
-    "vercel-build": "expo export:web"
+    "build:web": "expo export --platform web",
+    "vercel-build": "expo export --platform web"
   },
   "dependencies": {
     "@expo/metro-runtime": "5.0.4",
